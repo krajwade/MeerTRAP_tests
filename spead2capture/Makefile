@@ -19,7 +19,7 @@ DELCMD = rm
 all: fbf_send 
 
 fbf_send:fbf_send.cpp 
-	$(CC) $(CFLAGS) $(LFLAGS) -o $(BINDIR)/$@ $<
+	$(CC) $< $(CFLAGS) $(LFLAGS) -o $(BINDIR)/$@ 
 
 install:
 	@echo Nothing to install.
