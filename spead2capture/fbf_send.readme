@@ -1,0 +1,1 @@
+g++ --std=gnu++11 fbf_send.cpp -L $(SPEAD2_LIB_DIR) -I $(SPEAD2_INCLUDE_DIR) -lspead2 -lboost_system -lboost_program_options -pthread -lpthread -o fbf_send

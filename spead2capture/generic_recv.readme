@@ -1,0 +1,2 @@
+#note needs options
+g++ --std=gnu++11 generic_recv.cpp -L $(SPEAD2_LIB_DIR) -I $(SPEAD2_INCLUDE_DIR) -lspead2 -lboost_system -pthread -lpthread -o generic_recv
