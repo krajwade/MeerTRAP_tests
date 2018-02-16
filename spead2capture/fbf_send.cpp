@@ -45,6 +45,7 @@ int main(int argc, char** argv)
   float rate = DEFAULT_RATE; // bits per second
   std::string hostname = DEFAULT_HOST;
   std::string port = DEFAULT_PORT;
+  std::string interface = "";	
 
   
   namespace po = boost::program_options;
@@ -59,6 +60,8 @@ int main(int argc, char** argv)
      "The number of beams in the stream")
     ("nheaps,n", po::value<std::uint32_t>(&nheaps)->default_value(DEFAULT_NHEAPS),
      "The number of heaps to send")
+    ("interface,i", po::value<std::string>(&interface)->default_value(""),
+     "The interface to bind to")	
     ("rate,r", po::value<float>(&rate)
      ->default_value(DEFAULT_RATE)
      ->notifier([&rate](float _rate){rate=_rate/8.;}),
@@ -92,10 +95,20 @@ int main(int argc, char** argv)
   auto it = resolver.resolve(query);
   spead2::flavour f(spead2::maximum_version, 64, HEAP_ADDRESS_BITS, spead2::BUG_COMPAT_PYSPEAD_0_5_2);
 
-  auto config = spead2::send::stream_config(9000, rate, 65536, 1000);
+  auto config = spead2::send::stream_config(8192, rate, 65536, 1000);
 
-  spead2::send::udp_stream stream(tp.get_io_service(), *it, config);
+  spead2::send::udp_stream* stream_ptr;	
 
+  if (interface.length() != 0)
+    {		
+      stream_ptr = new spead2::send::udp_stream(tp.get_io_service(), *it, config, 8 * 1024 * 1024, 1, 
+        boost::asio::ip::address_v4::from_string(interface));
+    }
+  else
+    {
+      stream_ptr = new spead2::send::udp_stream(tp.get_io_service(), *it, config);
+    }  
+  spead2::send::udp_stream& stream = *stream_ptr;		
   std::vector<float> timings;
   
   spead2::descriptor timestamp_desc;
@@ -196,6 +209,8 @@ int main(int argc, char** argv)
   end.add_end();
   stream.async_send_heap(end, [] (const boost::system::error_code &ec, spead2::item_pointer_t bytes_transferred) {});
   stream.flush();
+
+  delete stream_ptr;
   return 0;
 }
 
