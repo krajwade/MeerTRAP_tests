@@ -11,15 +11,20 @@ SPEAD2_LIB_FLAGS = -L /usr/local/lib# define if not in $PATH (as -L[...])
 LFLAGS = $(SPEAD2_LIB_FLAGS) -lspead2 -lboost_system -lboost_program_options -pthread -lpthread 
 
  # directories
-BINDIR = ./bin
+BINDIR =./bin
+
 
 # command definitions
 DELCMD = rm
 
-all: fbf_send 
+all: fbf_send generic_recv
 
-fbf_send:fbf_send.cpp 
+generic_recv: generic_recv.cpp
 	$(CC) $< $(CFLAGS) $(LFLAGS) -o $(BINDIR)/$@ 
+
+fbf_send: fbf_send.cpp
+	$(CC) $< $(CFLAGS) $(LFLAGS) -o $(BINDIR)/$@ 
+
 
 install:
 	@echo Nothing to install.
