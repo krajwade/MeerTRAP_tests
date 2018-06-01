@@ -8,7 +8,7 @@ endif
 
 # linker flags
 SPEAD2_LIB_FLAGS = -L /usr/local/lib# define if not in $PATH (as -L[...])
-LFLAGS = $(SPEAD2_LIB_FLAGS) -lspead2 -lboost_system -lboost_program_options -pthread -lpthread 
+LFLAGS = -lboost_system -lboost_program_options -pthread -lpthread $(SPEAD2_LIB_FLAGS) -lspead2 
 
  # directories
 BINDIR =./bin
