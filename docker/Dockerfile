@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     kmod \
     libnuma1 \
     lsof \
+    gdb \
     linux-headers-4.4.0-92-generic \
     python-libxml2 && \
     rm -rf /var/lib/apt/lists/*
@@ -49,6 +50,7 @@ RUN apt-get update &&\
     automake \
     autogen \
     libtool \
+    tcpdump \
     csh \
     gcc \
     gfortran \
@@ -57,6 +59,8 @@ RUN apt-get update &&\
     cvs \
     cmake \
     vim \
+    gdb \
+    tmux \
     net-tools \
     expect \
     libcfitsio-dev \
@@ -106,10 +110,11 @@ ENV ARSE 3
 WORKDIR $PSRHOME
 RUN git clone https://github.com/ewanbarr/psrdada_cpp && \
     cd psrdada_cpp && \
-    git checkout master && \
+    git checkout transpose && \
+    git pull origin transpose && \
     mkdir build && \
     cd build && \
-    cmake -DENABLE_CUDA=true -DCMAKE_INSTALL_PREFIX=/usr/local ../ && \
+    cmake -DENABLE_CUDA=false -DCMAKE_INSTALL_PREFIX=/usr/local ../ && \
     make -j 1 && \
     make install && \
     make clean

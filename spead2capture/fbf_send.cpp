@@ -93,9 +93,9 @@ int main(int argc, char** argv)
   udp::resolver resolver(tp.get_io_service());
   udp::resolver::query query(hostname, port);
   auto it = resolver.resolve(query);
-  spead2::flavour f(spead2::maximum_version, 64, HEAP_ADDRESS_BITS, spead2::BUG_COMPAT_PYSPEAD_0_5_2);
+  spead2::flavour f(spead2::maximum_version, 64, HEAP_ADDRESS_BITS);
 
-  auto config = spead2::send::stream_config(8192, rate, 65536, 1000);
+  auto config = spead2::send::stream_config(1472, rate*1024*1024*1024, 65536, 1000);
 
   spead2::send::udp_stream* stream_ptr;	
 
@@ -129,11 +129,11 @@ int main(int argc, char** argv)
   frequency_desc.description = "subband ID";
   frequency_desc.format.emplace_back('u', HEAP_ADDRESS_BITS);
 
-  spead2::descriptor nchans_desc;
+  /*spead2::descriptor nchans_desc;
   nchans_desc.id = 0x1602;
   nchans_desc.name = "nchans";
   nchans_desc.description = "number of channels in subband";
-  nchans_desc.format.emplace_back('u', HEAP_ADDRESS_BITS);
+  nchans_desc.format.emplace_back('u', HEAP_ADDRESS_BITS);*/
 
   spead2::descriptor fbf_raw_desc;
   fbf_raw_desc.id = 0x1603;
@@ -146,6 +146,8 @@ int main(int argc, char** argv)
   std::uint64_t nchans = nchans_per_subband;
   std::uint64_t nsamples = 64*128;
   std::vector<char> fbf_raw(nsamples * nchans, 0);
+
+  std::cout << config.get_rate() << std::endl;
 
   for (std::size_t heap=0; heap < nheaps; ++heap)
     {
@@ -161,11 +163,11 @@ int main(int argc, char** argv)
 		  h_ptr->add_descriptor(timestamp_desc);
 		  h_ptr->add_descriptor(beam_id_desc);
 		  h_ptr->add_descriptor(frequency_desc);
-		  h_ptr->add_descriptor(nchans_desc);
+		  //h_ptr->add_descriptor(nchans_desc);
 		  h_ptr->add_descriptor(fbf_raw_desc);
 		  first_heap = false;
 		}
-	      frequency = subband;
+	      frequency = 128*subband;
 
 	      //timestamp
 	      h_ptr->add_item(0x1600, timestamp);
@@ -174,7 +176,7 @@ int main(int argc, char** argv)
 	      //frequency
 	      h_ptr->add_item(0x4103, frequency);
 	      //nchans
-	      h_ptr->add_item(0x1602, nchans);
+	      //h_ptr->add_item(0x1602, nchans);
 	      //fbf_raw
 	      h_ptr->add_item(0x1603, fbf_raw.data(), fbf_raw.size(), false);
 
@@ -183,18 +185,18 @@ int main(int argc, char** argv)
 				     {
 				       if (ec)
 					 std::cerr << ec.message() << '\n';
-				       /*
+				       
 				       else
 					 std::cout << "Sent " << bytes_transferred
 						   << " bytes in heap (" << subband
 						   << ", " << beam_id << ", "
 						   << timestamp<<")\n";
-				       */
+				       
 				       delete h_ptr;
 				     });
 	    } //subband loop 
 	} //beam loop
-      ++timestamp;
+      timestamp = timestamp + 2048;
       stream.flush();
       auto end = std::chrono::high_resolution_clock::now();
       std::chrono::duration<double> diff = end-start;

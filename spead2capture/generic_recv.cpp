@@ -21,7 +21,9 @@
 #include <boost/asio.hpp>
 #include <spead2/common_thread_pool.h>
 #include <spead2/common_endian.h>
+#include <spead2/common_ibv.h>
 #include <spead2/recv_udp.h>
+#include <spead2/recv_udp_ibv.h>
 #include <spead2/recv_heap.h>
 #include <spead2/recv_live_heap.h>
 #include <spead2/recv_ring_stream.h>
