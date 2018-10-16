@@ -1,0 +1,64 @@
+# This file contains an MKSEND configuration for coherent beam data from FBFUSE
+
+# The following options should have sufficient default values
+PACKET_SIZE     9000      # Jumbo frames
+BUFFER_SIZE     unset     # use default = 8 MB
+NTHREADS        16
+NHEAPS          32
+
+# The following options describe the DADA ringbuffer use
+DADA_MODE       1 # (0 = artificial data, 1 = data from dada ringbuffer)
+DADA_KEY        {{dada_key}}
+
+# The following options describe the connection to the network
+NETWORK_MODE           1 # (0 = no network, 1 = full network support)
+IBV_IF                 {{interface_address}}
+IBV_VECTOR             -1
+IBV_MAX_POLL           10
+UDP_IF                 unset
+NHOPS                  6
+RATE                   {{data_rate}}   # bits per second
+PORT                   7148
+MCAST_DESTINATIONS     {{mcast_groups_csv}}
+
+# The following options describe the timing information
+SYNC_TIME           {{sync_time}}
+SAMPLE_CLOCK        {{sample_clock}}
+SAMPLE_CLOCK_START  unset
+UTC_START           unset
+
+# The following options describe the outgoing heap structure
+HEAP_SIZE       {{heap_size}}
+HEAP_ID_START   {{heap_start}}
+HEAP_ID_OFFSET  {{heap_offset}}
+HEAP_ID_STEP    {{heap_step}}
+NSCI            0
+NITEMS          4
+
+# This item is a newly created timestamp
+ITEM1_ID        5632
+ITEM1_STEP      {{nsamples_per_heap}}
+ITEM1_LIST      unset
+ITEM1_INDEX     1
+ITEM1_SCI       unset
+
+# This item is an index (beam) specfied as a list
+ITEM2_ID        21845
+ITEM2_STEP      unset
+ITEM2_LIST      {{beam_ids_csv}}
+ITEM2_INDEX     unset
+ITEM2_SCI       unset
+
+# This item is an index (frequency) specified as a list
+ITEM3_ID        16643
+ITEM3_STEP      unset
+ITEM3_LIST      {{freq_id}}
+ITEM3_INDEX     unset
+ITEM3_SCI       unset
+
+# This value is a required dummy item to encode "cbf_raw" (effectively this item is the data)
+ITEM4_ID        21846
+ITEM4_STEP      unset
+ITEM4_LIST      unset
+ITEM4_INDEX     unset
+ITEM4_SCI       unset
