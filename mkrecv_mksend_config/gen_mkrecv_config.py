@@ -15,7 +15,7 @@ with open("fbfuse_ib_mksend.template","r") as f:
 
 
 def generate_test_mkrecv_cb_config(nantennas, beam_ids, freq_ids, mcast_groups,
-    interface, nchans=4096, dada_key=0xdada):
+    interface, nchans=4096, dada_key="dada"):
 
     nantennas = 2**(nantennas-1).bit_length()
     nchans_per_heap = nchans / nantennas
@@ -52,7 +52,7 @@ def generate_test_mkrecv_cb_config(nantennas, beam_ids, freq_ids, mcast_groups,
     return rendered
 
 def generate_test_mksend_cb_config(nantennas, beam_ids, freq_id, mcast_groups,
-    interface, worker_number=0, nchans=4096, dada_key=0xcaca):
+    interface, worker_number=0, nchans=4096, dada_key="caca"):
 
     nantennas = 2**(nantennas-1).bit_length()
     nchans_per_heap = nchans / nantennas
@@ -62,7 +62,8 @@ def generate_test_mksend_cb_config(nantennas, beam_ids, freq_id, mcast_groups,
     heap_size = npackets_per_heap * packet_size
     nsamples_per_heap = npackets_per_heap * nsamples_per_packet
     freq_ids = range(0, nchans, nchans_per_heap)
-    data_rate = 856e6 * (nchans_per_heap/float(nchans)) * 8 / 16
+    data_rate_per_beam = 856e6 * (nchans_per_heap/float(nchans)) * 8 / 16
+    data_rate = data_rate_per_beam * len(beam_ids)
     heap_start = (128 * worker_number) + 1
     heap_offset = 1
     heap_step = 128 * 64
