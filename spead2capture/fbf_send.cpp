@@ -95,8 +95,9 @@ int main(int argc, char** argv)
   auto it = resolver.resolve(query);
   spead2::flavour f(spead2::maximum_version, 64, HEAP_ADDRESS_BITS);
 
-  auto config = spead2::send::stream_config(1472, rate*1024*1024*1024, 65536, 1000);
+  auto config = spead2::send::stream_config(8192, rate*1024*1024*1024, 65536, 1000);
 
+  std::cout << "Rate is:"<< config.get_rate() << "\n";
   spead2::send::udp_stream* stream_ptr;	
 
   if (interface.length() != 0)
@@ -142,20 +143,30 @@ int main(int argc, char** argv)
   fbf_raw_desc.format.emplace_back('i', 8);
 
   std::uint64_t timestamp = 0;
-  std::uint64_t frequency = 0;
   std::uint64_t nchans = nchans_per_subband;
   std::uint64_t nsamples = 64*128;
+  unsigned n = 0;
   std::vector<char> fbf_raw(nsamples * nchans, 0);
+  std::generate(fbf_raw.begin(),fbf_raw.end(),[&]()
+                                              {
+                                                  if(n <= 127){
+                                                  return ++n;
+                                                  }
+                                                  else
+                                                  { n=0;
+                                                    return n;
+                                                  }      
+                                              });
 
-  std::cout << config.get_rate() << std::endl;
 
   for (std::size_t heap=0; heap < nheaps; ++heap)
     {
       auto start = std::chrono::high_resolution_clock::now();
       for (int beam_id=0; beam_id < nbeams; ++beam_id)
-	{
-	  for (std::uint32_t subband=0; subband < nsubbands; ++subband)
-	    {
+	  {
+       std::uint64_t frequency = 0;
+	   for (std::uint32_t subband=0; subband < nsubbands; ++subband)
+	   {
 	      spead2::send::heap* h_ptr = new spead2::send::heap(f);
 
 	      if (first_heap)

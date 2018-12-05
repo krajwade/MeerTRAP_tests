@@ -8,8 +8,8 @@
 int main(int argc, char* argv[])
 {
 
-   int nbeams, nchans, ntime, nsamples,nfreq;
-   int i,j,k,l,m;
+   int ngroups, nbeams, nchans, ntime, nsamples,nfreq;
+   int i,j,k,l,m,n;
    FILE *fptr=NULL;
 
    nbeams = atoi(argv[1]);
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
    ntime = atoi(argv[3]);
    nsamples = atoi(argv[4]);
    nfreq= atoi(argv[5]);
-
+   ngroups = atoi(argv[6]);
    srand(time(NULL));
 
    fptr = fopen("testdata.dat","wb");
@@ -27,6 +27,9 @@ int main(int argc, char* argv[])
        exit(1);
    }
 
+   for (n=0; n<ngroups; n++)
+   {
+ 
    for (i=0;i<nbeams;i++)
    {
     
@@ -41,8 +44,8 @@ int main(int argc, char* argv[])
 
 		    for (m=0;m<nchans;m++)
 		    {
-		       int idata = rand() % 10 + 1;
-		       fwrite(&idata,sizeof(int),1,fptr);
+		       char idata = rand() % 10 + 1;
+		       fwrite(&idata,sizeof(char),1,fptr);
 		    } 
 
                }
@@ -52,6 +55,7 @@ int main(int argc, char* argv[])
 
    }
 
+  }
 
    fclose(fptr);
    return(0);

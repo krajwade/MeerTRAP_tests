@@ -1,5 +1,5 @@
 CC = g++
-SPEAD2_INC_FLAGS = -I /usr/local/include#define if needed (as -I[...])
+SPEAD2_INC_FLAGS = -I /usr/local/share/apps/spead2/include#define if needed (as -I[...])
 ifeq ($(OPT_DEBUG), yes)
 CFLAGS = -g -pedantic -Wall -std=gnu++11 $(SPEAD2_INC_FLAGS)
 else
@@ -7,8 +7,8 @@ CFLAGS = -O3 -pedantic -Wall -std=gnu++11 $(SPEAD2_INC_FLAGS)
 endif
 
 # linker flags
-SPEAD2_LIB_FLAGS = -L /usr/local/lib# define if not in $PATH (as -L[...])
-LFLAGS = -lboost_system -lboost_program_options -pthread -lpthread $(SPEAD2_LIB_FLAGS) -lspead2 
+SPEAD2_LIB_FLAGS = -L /usr/local/share/apps/spead2/lib# define if not in $PATH (as -L[...])
+LFLAGS =  -libverbs -lrdmacm -lboost_system -lboost_program_options -pthread -lpthread $(SPEAD2_LIB_FLAGS) -lspead2 
 
  # directories
 BINDIR =./bin
